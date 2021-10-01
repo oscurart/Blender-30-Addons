@@ -24,7 +24,7 @@ bl_info = {
     "name": "Add Braid",
     "author": "Eugenio Pignataro (Oscurart)",
     "version": (1, 0),
-    "blender": (2, 93, 0),
+    "blender": (3, 00, 0),
     "location": "View3D > Add > Curve > Braid",
     "description": "Adds a Curve Braid",
     "warning": "",

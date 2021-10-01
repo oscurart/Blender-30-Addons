@@ -2,7 +2,7 @@ bl_info = {
     "name": "Edit Split Normals",
     "author": "Oscurart",
     "version": (1, 0),
-    "blender": (2, 80, 0),
+    "blender": (3, 00, 0),
     "location": "Search > Edit Slit Normals",
     "description": "Edit split normals like a mesh",
     "warning": "",
