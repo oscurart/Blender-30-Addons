@@ -20,7 +20,7 @@ bl_info = {
     "name": "Project Grease Pencil",
     "author": "Oscurart",
     "version": (1, 0),
-    "blender": (2, 80, 0),
+    "blender": (3, 00, 0),
     "api": 40600,
     "location": "Search > Project Grease Pencil",
     "description": "Project selected vertices in a grease pencil draw.",

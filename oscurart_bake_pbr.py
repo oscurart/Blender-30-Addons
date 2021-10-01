@@ -5,7 +5,7 @@ bl_info = {
     "name": "Bake PBR",
     "author": "Eugenio Pignataro (Oscurart)",
     "version": (1, 1),
-    "blender": (2, 80, 0),
+    "blender": (3, 00, 0),
     "location": "Render > Bake PBR",
     "description": "Bake PBR maps",
     "warning": "",

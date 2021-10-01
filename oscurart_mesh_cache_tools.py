@@ -2,7 +2,7 @@ bl_info = {
     "name": "Mesh Cache Tools",
     "author": "Oscurart",
     "version": (1, 0, 1),
-    "blender": (2, 80, 0),
+    "blender": (3, 00, 0),
     "location": "Tools > Mesh Cache Tools",
     "description": "Tools for Management Mesh Cache Process",
     "warning": "",
