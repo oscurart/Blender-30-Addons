@@ -1,8 +1,8 @@
 bl_info = {
     "name": "Mesh Cache Tools",
     "author": "Oscurart",
-    "version": (1, 0, 1),
-    "blender": (2, 80, 0),
+    "version": (1, 0, 2),
+    "blender": (3, 00, 0),
     "location": "Tools > Mesh Cache Tools",
     "description": "Tools for Management Mesh Cache Process",
     "warning": "",
@@ -70,10 +70,10 @@ class VIEW3D_PT_tools_meshcachetools(bpy.types.Panel):
         row.operator("scene.pc_auto_load_proxy_remove", text="Remove List")
         
         for i in scene.pc_auto_load_proxy:
-            if bpy.data.collections[i.name].library is not None:
-                row = layout.row()
-                row.prop(bpy.data.collections[i.name], "name", text="")
-                row.prop(i, "use_auto_load", text="")        
+            #if bpy.data.collections[i.name].library is not None:
+            row = layout.row()
+            row.prop(bpy.data.collections[i.name], "name", text="")
+            row.prop(i, "use_auto_load", text="")        
 
 
 # SET FOLDER ----------------------
@@ -121,14 +121,14 @@ def get_sampled_frames(start, end, sampling):
 def do_export(context, props):
     folderpath = bpy.context.scene.pc_pc2_folder
     #for collOb in bpy.context.selected_objects:
-    for collOb in bpy.context.view_layer.layer_collection.children:
-        for ob in collOb.collection.all_objects:     
+    for collOb in bpy.context.selected_objects:
+        for ob in collOb.users_collection[0].all_objects:     
             if ob.type == "MESH": 
                 if bpy.context.scene.pc_pc2_exclude not in ob.name:
                     if not ob.hide_viewport:
                         if bpy.context.scene.pc_pc2_applyGenMods == False:
                             OscRemoveGenModifiers(ob,False)
-                        filepath= "%s/%s_%s.pc2" % (bpy.path.abspath(folderpath), collOb.collection.name,ob.name)
+                        filepath= "%s/%s_%s.pc2" % (bpy.path.abspath(folderpath), collOb.users_collection[0].name,ob.name)
                         mat_x90 = mathutils.Matrix.Rotation(-math.pi/2, 4, 'X')
                         sc = bpy.context.scene
                         start = sc.frame_start
@@ -177,7 +177,7 @@ def do_export(context, props):
                                 me.transform(ob.matrix_world)
                                 
                             if bpy.context.scene.pc_pc2_apply_collection_matrix:
-                                me.transform(bpy.context.active_object.matrix_world)                  
+                                me.transform(ob.matrix_world)                  
 
 
                             for v in me.vertices:
@@ -264,12 +264,14 @@ class CreaPropiedades(bpy.types.Operator):
     bl_label = "Create Auto Load PC Proxy List"
 
     def execute(self, context):
-        for col in bpy.data.collections:
+        for col in  bpy.context.scene.collection.children[:]:
+            print(col.name)
             if col.name not in bpy.context.scene.pc_auto_load_proxy:
-                if col.library is not None:
-                    i = bpy.context.scene.pc_auto_load_proxy.add()
-                    i.name = col.name
-                    i.use_auto_load = False
+                #if col.library is not None:
+                i = bpy.context.scene.pc_auto_load_proxy.add()
+                i.name = col.name
+                i.use_auto_load = False
+        print("----------------------")    
         return {'FINISHED'}    
 
 class RemuevePropiedades(bpy.types.Operator):
