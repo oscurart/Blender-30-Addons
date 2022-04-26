@@ -43,12 +43,12 @@ class ShapeToObjects(Operator):
     def execute(self, context):
         OBJACT = bpy.context.view_layer.objects.active
         has_keys = hasattr(getattr(OBJACT.data, "shape_keys", None), "key_blocks")
-        if has_keys:
-            depsgraph = bpy.context.evaluated_depsgraph_get()
+        if has_keys:            
             for SHAPE in OBJACT.data.shape_keys.key_blocks[:]:
                 print(SHAPE.name)
                 bpy.ops.object.shape_key_clear()
                 SHAPE.value = 1
+                depsgraph = bpy.context.evaluated_depsgraph_get()
                 OBJACT_eval = OBJACT.evaluated_get(depsgraph)
                 mesh = bpy.data.meshes.new_from_object(OBJACT_eval)
                 object = bpy.data.objects.new(SHAPE.name, mesh)
