@@ -51,7 +51,7 @@ def SelDoubles(self, context, distance):
     bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
 
     # Show the updates in the viewport
-    bmesh.update_edit_mesh(me, False)
+    bmesh.update_edit_mesh(me)
 
 class SelectDoubles(Operator):
     """Selects duplicated vertex without merge them"""
