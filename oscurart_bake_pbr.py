@@ -297,6 +297,10 @@ def bake(map, frame):
 def executePbr():
 
     engine = bpy.context.scene.render.engine
+    vtr = bpy.context.scene.view_settings.view_transform
+    look = bpy.context.scene.view_settings.look
+    bpy.context.scene.view_settings.view_transform = "Linear Raw"
+    bpy.context.scene.view_settings.look = "None"
 
     # bakeo
     folderCheck()
@@ -329,7 +333,8 @@ def executePbr():
             do_ui_user=True)
 
     bpy.context.scene.render.engine = engine
-
+    bpy.context.scene.view_settings.view_transform = vtr
+    bpy.context.scene.view_settings.look = look
 
 class BakePbr (bpy.types.Operator):
     """Bake PBR materials"""
