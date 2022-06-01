@@ -299,7 +299,10 @@ def executePbr():
     engine = bpy.context.scene.render.engine
     vtr = bpy.context.scene.view_settings.view_transform
     look = bpy.context.scene.view_settings.look
-    bpy.context.scene.view_settings.view_transform = "Linear Raw"
+    try:    
+        bpy.context.scene.view_settings.view_transform = "Linear Raw"
+    except:
+        bpy.context.scene.view_settings.view_transform = "Raw"    
     bpy.context.scene.view_settings.look = "None"
 
     # bakeo
