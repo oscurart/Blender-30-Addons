@@ -55,6 +55,7 @@ from oscurart_tools.render import material_overrides
 from oscurart_tools.mesh import flipped_uvs
 from oscurart_tools.mesh import print_uv_stats
 from oscurart_tools.mesh import peel_uv
+from oscurart_tools.mesh import edit_uvs_viewport
 
 
 from bpy.types import (
@@ -133,11 +134,14 @@ class VIEW3D_MT_object_oscurarttools(Menu):
         layout.operator("mesh.apply_linked_meshes")
         layout.operator("object.delta_to_global")
         layout.operator("mesh.print_uv_stats")
+        layout.operator("mesh.create_uv_edition")
+        layout.operator("mesh.restore_uv_edition")
         layout.separator()
         layout.operator("image.reload_images_osc")
         layout.operator("file.save_incremental_backup")
         layout.operator("file.collect_all_images")
         layout.operator("file.create_batch_maker_osc")
+        
 
 def menu_funcObject(self, context):
     self.layout.menu("VIEW3D_MT_object_oscurarttools")
@@ -176,7 +180,9 @@ classes = (
     flipped_uvs.selectFlippedUvs,
     peel_uv.PeelUnwrap,
     print_uv_stats.uvStats,
-    delta_to_global.DeltaToGlobalOt
+    delta_to_global.DeltaToGlobalOt,
+    edit_uvs_viewport.createUvEdition,
+    edit_uvs_viewport.copyUvEdition
     )
 
 def register():
