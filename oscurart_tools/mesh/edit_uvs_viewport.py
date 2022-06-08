@@ -5,13 +5,14 @@ def defcreateUvEdition(ob):
     for edge in ob.data.edges:
         edge.use_edge_sharp = edge.use_seam
 
-    mod = ob.modifiers.new("split", "EDGE_SPLIT")
-    mod.use_edge_angle = 0
-    bpy.ops.object.modifier_apply(modifier="split")
-
     me = ob.data.copy()
     dob = bpy.data.objects.new("%s_edit" % (ob.name), me)
     bpy.context.layer_collection.collection.objects.link(dob)
+    
+    bpy.context.view_layer.objects.active = dob
+    mod = dob.modifiers.new("split", "EDGE_SPLIT")
+    mod.use_edge_angle = 0
+    bpy.ops.object.modifier_apply(modifier="split")    
 
     for loop in dob.data.loops:
         dob.data.vertices[loop.vertex_index].co = dob.data.uv_layers.active.data[loop.index].uv[:] + (
@@ -24,7 +25,7 @@ def defcopyUvEdition(ob):
         ob = bpy.data.objects[dob.name.removesuffix("_edit")]
 
         for dloop, loop in zip(dob.data.loops, ob.data.loops):
-            ob.data.uv_layers.active.data[loop.index].uv = dob.data.vertices[loop.vertex_index].co[:2]
+            ob.data.uv_layers.active.data[loop.index].uv = dob.data.vertices[dloop.vertex_index].co[:2]
 
         for edge in ob.data.edges:
             edge.use_edge_sharp = 0
