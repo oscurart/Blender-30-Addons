@@ -15,7 +15,7 @@ def defcreateUvEdition(ob):
 
     for loop in dob.data.loops:
         dob.data.vertices[loop.vertex_index].co = dob.data.uv_layers.active.data[loop.index].uv[:] + (
-            1,)
+            0,)
 
 
 def defcopyUvEdition(ob):
