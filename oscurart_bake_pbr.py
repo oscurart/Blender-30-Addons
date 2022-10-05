@@ -132,7 +132,7 @@ def createTempMats():
                     channelMat = mat.copy()
                     channelMat.name = "%s_%s" % (channel, mat.name)
                     principleds = [
-                        node for node in channelMat.node_tree.nodes if node.type == "BSDF_PRINCIPLED"]
+                        node.inputs[0].links[0].from_socket.node for node in channelMat.node_tree.nodes if node.type == "OUTPUT_MATERIAL"]
                     mixs = [
                         node for node in channelMat.node_tree.nodes if node.type == "MIX_SHADER"]
 
