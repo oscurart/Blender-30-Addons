@@ -25,9 +25,25 @@ from math import sqrt
 from math import pow
 
 
+
+
+def createMixedMesh():
+    global PTM
+    PTM = bpy.data.meshes.new("printTestTmp")    
+    obs = [o for o in bpy.context.selected_objects if o.type == "MESH"]
+    bm = bmesh.new()
+    for o in obs:
+        bm.from_mesh(o.data) 
+        
+    bmesh.ops.triangulate(bm, faces=bm.faces[:])
+    bm_tess = bpy.data.meshes.new("Tris")    
+    
+    bm.to_mesh(PTM)    
+        
+
 def setImageRes(object):
     global pixels
-    mat = object.material_slots[object.active_material_index].material
+    mat = bpy.context.object.data.materials[0]
     if  mat.node_tree.nodes.active.type in ["TEX_IMAGE"]:
         pixels = [mat.node_tree.nodes.active.image.size[0] ,mat.node_tree.nodes.active.image.size[1] ]
         return(True)
@@ -37,38 +53,24 @@ def setImageRes(object):
         return(False)
 
 
-def makeTessellate(actObj):
-    global bm_tess
-    ob = actObj
-    me = ob.data
-    bm = bmesh.new()
-    bm.from_mesh(me)
-    bmesh.ops.triangulate(bm, faces=bm.faces[:])
-    bm_tess = bpy.data.meshes.new("Tris")
-    bm.to_mesh(bm_tess)
 
 
 def calcArea():
     global totalArea
     totalArea = 0
-    for poly in bm_tess.polygons:
-        uno = bm_tess.uv_layers.active.data[poly.loop_indices[0]].uv
-        dos = bm_tess.uv_layers.active.data[poly.loop_indices[1]].uv
-        tres = bm_tess.uv_layers.active.data[poly.loop_indices[2]].uv
+    for poly in PTM.polygons:
+        uno = PTM.uv_layers.active.data[poly.loop_indices[0]].uv
+        dos = PTM.uv_layers.active.data[poly.loop_indices[1]].uv
+        tres = PTM.uv_layers.active.data[poly.loop_indices[2]].uv
         area = area_tri(uno, dos, tres)
         totalArea += area
 
-    bpy.data.meshes.remove(
-        bm_tess,
-        do_unlink=True,
-        do_id_user=True,
-        do_ui_user=True)
 
 
-def calcMeshArea(ob):
+def calcMeshArea():
     global GlobLog
     polyArea = 0
-    for poly in ob.data.polygons:
+    for poly in PTM.polygons:
         polyArea += poly.area
     ta = "UvGain: %s%s || " % (round(totalArea * 100),"%")
     ma = "MeshArea: %s || " % (polyArea)
@@ -79,6 +81,13 @@ def calcMeshArea(ob):
 
 
 
+def cleanPrintMeshes():
+    bpy.data.meshes.remove(
+        PTM,
+        do_unlink=True,
+        do_id_user=True,
+        do_ui_user=True)
+  
 
 class uvStats(bpy.types.Operator):
     """Print Uv Stats"""
@@ -91,35 +100,15 @@ class uvStats(bpy.types.Operator):
         return context.active_object is not None
 
     def execute(self, context):
-        if round(
-                bpy.context.object.scale.x,
-                2) == 1 and round(
-                    bpy.context.object.scale.y,
-                    2) == 1 and round(
-                        bpy.context.object.scale.x,
-                        2) == 1:
-            if setImageRes(bpy.context.object):
-                makeTessellate(bpy.context.object)
-                calcArea()
-                calcMeshArea(bpy.context.object)
-        else:
-            print("Warning: Non Uniform Scale Object")
+        if setImageRes(bpy.context.object):    
+            createMixedMesh()        
+            calcArea()
+            calcMeshArea()
 
-            copyOb = bpy.context.object.copy()
-            copyMe = bpy.context.object.data.copy()
-            bpy.context.scene.collection.objects.link(copyOb)
-            copyOb.data = copyMe
-            bpy.ops.object.select_all(action="DESELECT")
-            copyOb.select_set(1)
-            bpy.ops.object.transform_apply()
-
-            if setImageRes(copyOb):
-                makeTessellate(copyOb)
-                calcArea()
-                calcMeshArea(copyOb)
-
-            bpy.data.objects.remove(copyOb)
-            bpy.data.meshes.remove(copyMe)
+        cleanPrintMeshes()
 
         self.report({'INFO'}, GlobLog)
+        
+
         return {'FINISHED'}
+
