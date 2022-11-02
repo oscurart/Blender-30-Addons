@@ -52,10 +52,12 @@ from oscurart_tools.mesh import apply_linked_meshes
 from oscurart_tools.render import render_tokens
 from oscurart_tools.render import batch_maker
 from oscurart_tools.render import material_overrides
+from oscurart_tools.render import set_render_border
 from oscurart_tools.mesh import flipped_uvs
 from oscurart_tools.mesh import print_uv_stats
 from oscurart_tools.mesh import peel_uv
 from oscurart_tools.mesh import edit_uvs_viewport
+
 
 
 from bpy.types import (
@@ -141,6 +143,7 @@ class VIEW3D_MT_object_oscurarttools(Menu):
         layout.operator("file.save_incremental_backup")
         layout.operator("file.collect_all_images")
         layout.operator("file.create_batch_maker_osc")
+        layout.operator("render.set_render_border")
         
 
 def menu_funcObject(self, context):
@@ -182,7 +185,8 @@ classes = (
     print_uv_stats.uvStats,
     delta_to_global.DeltaToGlobalOt,
     edit_uvs_viewport.createUvEdition,
-    edit_uvs_viewport.copyUvEdition
+    edit_uvs_viewport.copyUvEdition,
+    set_render_border.oscSetRenderBorder
     )
 
 def register():
