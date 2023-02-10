@@ -19,6 +19,7 @@
 # <pep8 compliant>
 
 import bpy
+import bmesh
 
 
 
