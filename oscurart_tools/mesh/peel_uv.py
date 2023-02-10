@@ -24,35 +24,47 @@ import bpy
 
 def PeelUv(self, context):
 
-    bpy.ops.object.mode_set(mode="OBJECT")
-
     ob = bpy.context.object
-    actPoly=  bpy.context.object.data.polygons[bpy.context.object.data.polygons.active]
+    bm = bmesh.from_edit_mesh(bpy.context.object.data)
+    selFaces = [face for face in bm.faces if face.select]
 
-    edgeKeys = actPoly.edge_keys
-    loopIndices = actPoly.loop_indices
+    for selFace in selFaces:    
+        
+        #deselect all         
+        for poly in bm.faces:
+            poly.select_set(False)    
+        
+        #active
+        bm.faces.active = selFace
+        selFace.select_set(True)    
+        ob.data.update()
+        
+        edgeKeys = bm.faces.active.edges
+        loopIndices = bm.faces.active.loops
 
-    # guardo las posiciones de los vertices del poligono para calcular la proporcion
-    uno = abs((ob.data.vertices[edgeKeys[0][0]].co - ob.data.vertices[edgeKeys[0][1]].co).length)
-    dos = abs((ob.data.vertices[edgeKeys[1][0]].co - ob.data.vertices[edgeKeys[1][1]].co).length)
-    tres = abs((ob.data.vertices[edgeKeys[2][0]].co - ob.data.vertices[edgeKeys[2][1]].co).length)
-    cuatro = abs((ob.data.vertices[edgeKeys[3][0]].co - ob.data.vertices[edgeKeys[3][1]].co).length)
+        # guardo las posiciones de los vertices del poligono para calcular la proporcion
+        uno = abs((edgeKeys[0].verts[0].co - edgeKeys[0].verts[1].co).length)
+        dos = abs((edgeKeys[1].verts[0].co - edgeKeys[1].verts[1].co).length)
+        tres = abs((edgeKeys[2].verts[0].co - edgeKeys[2].verts[1].co).length)
+        cuatro = abs((edgeKeys[3].verts[0].co - edgeKeys[3].verts[1].co).length)
 
-    proporcion = (uno + tres) / (dos + cuatro)
+        proporcion = (uno + tres) / (dos + cuatro)
 
-    #paso a object para setear el area del uv
+        #set positions
+        uv_layer = bm.loops.layers.uv.active
 
-    ob.data.uv_layers.active.data[loopIndices[0]].uv = (0,0)
-    ob.data.uv_layers.active.data[loopIndices[1]].uv = (1,0)
-    ob.data.uv_layers.active.data[loopIndices[2]].uv = (1,1/proporcion)
-    ob.data.uv_layers.active.data[loopIndices[3]].uv = (0,1/proporcion)
+        bm.faces.active.loops[0][uv_layer].uv = (0,0)
+        bm.faces.active.loops[1][uv_layer].uv = (1,0)
+        bm.faces.active.loops[2][uv_layer].uv = (1,1/proporcion)
+        bm.faces.active.loops[3][uv_layer].uv = (0,1/proporcion)
 
-    bpy.context.object.data.polygons.active = actPoly.index
-      
-    bpy.ops.object.mode_set(mode="EDIT")
-    bpy.ops.mesh.select_linked(delimit={"SEAM"})
-    bpy.ops.uv.follow_active_quads(mode="LENGTH_AVERAGE")
-    bpy.ops.uv.pack_islands()
+
+        ob.data.update()
+
+        #bpy.context.object.data.polygons.active = actPoly.index
+        bpy.ops.mesh.select_linked(delimit={"SEAM"})
+        bpy.ops.uv.follow_active_quads(mode="LENGTH_AVERAGE")
+        bpy.ops.uv.pack_islands()
 
         
 
