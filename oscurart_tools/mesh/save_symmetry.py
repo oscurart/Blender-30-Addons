@@ -40,6 +40,7 @@ def SaveSym(self, context):
         bpy.ops.mesh.select_mirror()
         mirrorVert = [mirrorvert.index for mirrorvert in bm.verts if mirrorvert.select][0]
         vertList[mirrorVert] = index
+        vertList[index] = mirrorVert
 
  
     file = os.path.basename(bpy.data.filepath)
