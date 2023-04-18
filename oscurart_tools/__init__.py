@@ -57,7 +57,7 @@ from oscurart_tools.mesh import flipped_uvs
 from oscurart_tools.mesh import print_uv_stats
 from oscurart_tools.mesh import peel_uv
 from oscurart_tools.mesh import edit_uvs_viewport
-
+from oscurart_tools.mesh import save_symmetry
 
 
 from bpy.types import (
@@ -85,6 +85,8 @@ class VIEW3D_MT_edit_mesh_oscurarttools(Menu):
         layout.operator("mesh.select_doubles")
         layout.operator("mesh.print_uv_stats")
         layout.operator("mesh.peel_unwrap")
+        layout.operator("mesh.save_symmetry")
+        layout.operator("mesh.restore_symmetry")
         layout.separator()
         layout.operator("image.reload_images_osc")
         layout.operator("file.save_incremental_backup")
@@ -186,7 +188,9 @@ classes = (
     delta_to_global.DeltaToGlobalOt,
     edit_uvs_viewport.createUvEdition,
     edit_uvs_viewport.copyUvEdition,
-    set_render_border.oscSetRenderBorder
+    set_render_border.oscSetRenderBorder,
+    save_symmetry.SaveSymmetry,
+    save_symmetry.RestoreSymmetry,
     )
 
 def register():
