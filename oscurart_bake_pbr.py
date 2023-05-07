@@ -14,6 +14,7 @@ bl_info = {
 }
 
 
+# check IMAGES folder and creates it.
 def folderCheck():
     fp = bpy.path.abspath(bpy.data.filepath)
     dirFile = os.path.dirname(fp)
@@ -22,12 +23,14 @@ def folderCheck():
     if not os.path.exists(imagesFile):
         os.mkdir(imagesFile)
 
+# Set EXR in scene
 def setExr():
     bpy.context.scene.render.image_settings.file_format = "OPEN_EXR"
     bpy.context.scene.render.image_settings.color_mode = "RGBA"
     bpy.context.scene.render.image_settings.exr_codec = "ZIP"
     bpy.context.scene.render.image_settings.color_depth = "16"    
-    
+
+# Set PNG format    
 def setPng():
     bpy.context.scene.render.image_settings.file_format = "PNG"   
     bpy.context.scene.render.image_settings.color_mode = "RGBA"
@@ -78,17 +81,19 @@ def setSceneOpts():
 # __________________________________________________________________________________
 
 
+#  MERGE OBJECTS
 def mergeObjects():
     global selectedObjects
     global object
     global selObject
     global mergeMatSlots
-    # agrupo los seleccionados y el activo
+    
+    # Make selected and active groups
     object = bpy.context.active_object
     selectedObjects = bpy.context.selected_objects[:].copy()
     selectedObjects.remove(bpy.context.active_object)
 
-    # si es selected to active hago un merge de los objetos restantes
+    # if it is selected to active it makes a merge
     if selected_to_active:
         obInScene = bpy.data.objects[:].copy()
         bpy.ops.object.select_all(action="DESELECT")
@@ -118,6 +123,9 @@ def mergeObjects():
 
 
 # __________________________________________________________________________________
+
+
+# TEMPORARY MATERIALS FOR EACH CHANNEL
 
 def createTempMats():
     global channelVector
