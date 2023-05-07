@@ -1,6 +1,8 @@
 from datetime import datetime
 import os
 import bpy
+from mathutils import Vector
+
 bl_info = {
     "name": "Bake PBR",
     "author": "Eugenio Pignataro (Oscurart)",
@@ -195,7 +197,7 @@ def restauraSlots(selObject):
 # __________________________________________________________________________________
 
 
-def bake(map, frame):
+def bake(map, frame, udim):
     # time
     start_time = datetime.now()
 
@@ -232,6 +234,13 @@ def bake(map, frame):
                                                bpy.context.scene.bake_pbr_channels,
                                                "sequence") else "")
 
+
+    #UDIM
+    if bpy.context.scene.bake_pbr_channels.UDIMS != "":
+        img.filepath = img.filepath.replace(".","_%s." % (udim))
+    
+    
+    
     # cambio todos los slots por el del canal
     cambiaSlots(selObject, map)
 
@@ -302,6 +311,21 @@ def bake(map, frame):
     print('Time elapsed (hh:mm:ss.ms) {}'.format(time_elapsed))
 
 
+
+
+# __________________________________________________________________________________
+# UDIMS
+
+def offsetUdims(bakerestore,udim):
+
+    horizontal =(int(udim[-1])-1) * bakerestore
+    vertical = int(udim[-2]) * bakerestore
+    offset = Vector((horizontal,vertical))
+    # use object like a global name
+    for vcorn in  object.data.uv_layers.active.uv:
+        vcorn.vector += offset    
+
+
 # __________________________________________________________________________________
 
 def executePbr():
@@ -320,6 +344,7 @@ def executePbr():
     setSceneOpts()
     mergeObjects()
     createTempMats()
+       
 
     for map in channelsDict.keys():
         if getattr(bpy.context.scene.bake_pbr_channels, map):
@@ -328,10 +353,16 @@ def executePbr():
                         bpy.context.scene.frame_start,
                         bpy.context.scene.frame_end + 1):
                     bpy.context.scene.frame_set(frameNumber)
-                    bake(map, frameNumber)
+                    bake(map, frameNumber,"")
             else:
-                bake(map, "")
-
+                if bpy.context.scene.bake_pbr_channels['UDIMS'] == "":
+                    bake(map, "", "")
+                else:
+                    for UDIM in bpy.context.scene.bake_pbr_channels['UDIMS'].split(","):
+                        offsetUdims(-1,UDIM) #UDIMS  OFFSET   
+                        bake(map, "", UDIM)
+                        offsetUdims(1,UDIM)#UDIMS RESTORE
+                    
     # remuevo materiales copia
     for ma in bpy.data.materials:
         if ma.users == 0:
@@ -344,7 +375,7 @@ def executePbr():
             do_unlink=True,
             do_id_user=True,
             do_ui_user=True)
-
+    
     bpy.context.scene.render.engine = engine
     bpy.context.scene.view_settings.view_transform = vtr
     bpy.context.scene.view_settings.look = look
@@ -391,7 +422,7 @@ class bakeChannels(bpy.types.PropertyGroup):
     seltoact: bpy.props.BoolProperty(name="Selected to active", default=True)
     use_pngcopy: bpy.props.BoolProperty(name="Get a png copy", default=True)    
     sequence: bpy.props.BoolProperty(name="Render sequence", default=False)
-
+    UDIMS: bpy.props.StringProperty(name="UDIMS", default="")
 
 bpy.utils.register_class(bakeChannels)
 
@@ -451,6 +482,8 @@ class OSCPBR_PT_LayoutDemoPanel(bpy.types.Panel):
         row.prop(scene.bake_pbr_channels, "Normal")
         row = layout.row()
         row.prop(scene.bake_pbr_channels, "Alpha")
+        row = layout.row()
+        row.prop(scene.bake_pbr_channels, "UDIMS")        
         row = layout.row()
         row.prop(scene.bake_pbr_channels, "sizex")
         row.prop(scene.bake_pbr_channels, "sizey")
