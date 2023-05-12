@@ -6,7 +6,7 @@ from mathutils import Vector
 bl_info = {
     "name": "Bake PBR",
     "author": "Eugenio Pignataro (Oscurart)",
-    "version": (1, 1),
+    "version": (1, 3),
     "blender": (3, 00, 0),
     "location": "Render > Bake PBR",
     "description": "Bake PBR maps",
@@ -89,6 +89,16 @@ def setSceneOpts():
 
 def inicialChecking():
     status = 0
+    
+    #if selection is none
+    if len(bpy.context.selected_objects) == 0:
+        if bpy.context.scene.bake_pbr_channels.seltoact:
+            print ( "You need select 2 objects at least." ) 
+            status =1        
+        else:  
+            print ( "you need select 1 objects at least." ) 
+            status = 1
+    
     for ob in bpy.context.selected_objects:
         # check material exists and principled
         if len(ob.material_slots) > 0:
@@ -106,9 +116,10 @@ def inicialChecking():
         #check if selection is ok
         if bpy.context.scene.bake_pbr_channels.seltoact:
             if len(bpy.context.selected_objects) < 2:
-                print ( "%s you need select 2 objects at least." % (ob.name)) 
+                print ( "You need select 2 objects at least." % (ob.name)) 
                 status =1  
-    return (status)           
+
+    return (status)                              
             
             
 # __________________________________________________________________________________            
@@ -425,7 +436,6 @@ class BakePbr (bpy.types.Operator):
         #inicial checking , if initial checking is ok let you continue
         if  inicialChecking()  ==  0 :    
             executePbr()      
-        
         else:            
             self.report({'WARNING'}, "ERROR, check console")
         return {'FINISHED'}
