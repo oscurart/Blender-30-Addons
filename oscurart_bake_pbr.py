@@ -116,7 +116,7 @@ def inicialChecking():
         #check if selection is ok
         if bpy.context.scene.bake_pbr_channels.seltoact:
             if len(bpy.context.selected_objects) < 2:
-                print ( "You need select 2 objects at least." % (ob.name)) 
+                print ( "You need select 2 objects at least.") 
                 status =1  
 
     return (status)                              
