@@ -44,12 +44,14 @@ def setSceneOpts():
     global sizex
     global sizey
     global selected_to_active
+    global UDIMS
 
     # VARIABLES
     sizex = bpy.context.scene.bake_pbr_channels.sizex
     sizey = bpy.context.scene.bake_pbr_channels.sizey
     pngCopy = bpy.context.scene.bake_pbr_channels.use_pngcopy
     selected_to_active = bpy.context.scene.bake_pbr_channels.seltoact
+    UDIMS = bpy.context.scene.bake_pbr_channels.UDIMS
 
     channelsDict = {
         "Base_Color": [True],
@@ -83,6 +85,35 @@ def setSceneOpts():
 # __________________________________________________________________________________
 
 
+# CHECKING INICIAL
+
+def inicialChecking():
+    status = 0
+    for ob in bpy.context.selected_objects:
+        # check material exists and principled
+        if len(ob.material_slots) > 0:
+            for ms in ob.material_slots:
+                 try:
+                    ms.material.node_tree.nodes['Material Output'].inputs[0].links[0].from_node.type == "BSDF_PRINCIPLED"
+                 except:
+                     print("%s does not have principled." % (ms.material.name))  
+                     status =1  
+                     
+        else:
+            print("%s has not material." % (ob.name)) 
+            status =1     
+        
+        #check if selection is ok
+        if bpy.context.scene.bake_pbr_channels.seltoact:
+            if len(bpy.context.selected_objects) < 2:
+                print ( "%s you need select 2 objects at least." % (ob.name)) 
+                status =1  
+    return (status)           
+            
+            
+# __________________________________________________________________________________            
+            
+            
 #  MERGE OBJECTS
 def mergeObjects():
     global selectedObjects
@@ -329,7 +360,7 @@ def offsetUdims(bakerestore,udim):
 # __________________________________________________________________________________
 
 def executePbr():
-
+    
     engine = bpy.context.scene.render.engine
     vtr = bpy.context.scene.view_settings.view_transform
     look = bpy.context.scene.view_settings.look
@@ -355,7 +386,7 @@ def executePbr():
                     bpy.context.scene.frame_set(frameNumber)
                     bake(map, frameNumber,"")
             else:
-                if bpy.context.scene.bake_pbr_channels['UDIMS'] == "":
+                if UDIMS == "":
                     bake(map, "", "")
                 else:
                     for UDIM in bpy.context.scene.bake_pbr_channels['UDIMS'].split(","):
@@ -389,8 +420,14 @@ class BakePbr (bpy.types.Operator):
     def poll(cls, context):
         return context.active_object is not None
 
-    def execute(self, context):
-        executePbr()
+    def execute(self, context):        
+        
+        #inicial checking , if initial checking is ok let you continue
+        if  inicialChecking()  ==  0 :    
+            executePbr()      
+        
+        else:            
+            self.report({'WARNING'}, "ERROR, check console")
         return {'FINISHED'}
 
 
