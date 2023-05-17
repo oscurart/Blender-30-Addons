@@ -1,6 +1,15 @@
 # Blender-30-Addons
 Addons for blender 3.x
 
+# Installation
+* **Option 1**: Copy the `oscurart_tools` folder to your Scripts folder.
+* **Option 2**: Compress the `oscurart_tools` folder to a '.zip' file.
+  * Inside of blender go to `Edit > Preferences > Add-ons`
+  * Click `Install...` in the top right corner
+  * Navigate to your '.zip' file and select `Install Add-on`
+
+> Note: in the preferences menu, you may need to go to the `File Paths` tab and manually set your Scripts folder.
+
 Bugs? let me know!
 
 OSCURART TOOLS  - It's a set of production-oriented tools.
