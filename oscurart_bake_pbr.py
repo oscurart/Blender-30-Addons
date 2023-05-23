@@ -99,16 +99,21 @@ def inicialChecking():
             print ( "you need select 1 objects at least." ) 
             status = 1
     
+    
     for ob in bpy.context.selected_objects:
         # check material exists and principled
         if len(ob.material_slots) > 0:
             for ms in ob.material_slots:
-                 try:
-                    ms.material.node_tree.nodes['Material Output'].inputs[0].links[0].from_node.type == "BSDF_PRINCIPLED"
-                 except:
-                     print("%s does not have principled." % (ms.material.name))  
-                     status =1  
-                     
+                if ms.material != None:
+                     try:
+                        ms.material.node_tree.nodes['Material Output'].inputs[0].links[0].from_node.type == "BSDF_PRINCIPLED"
+                     except:
+                         print("%s does not have principled." % (ms.material.name))  
+                         status =1  
+                else:
+                    print("%s has empty material slot." % (ob.name))  
+                    status = 1                    
+                                         
         else:
             print("%s has not material." % (ob.name)) 
             status =1     
