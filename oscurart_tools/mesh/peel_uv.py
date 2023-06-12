@@ -65,7 +65,7 @@ def PeelUv(self, context):
         #bpy.context.object.data.polygons.active = actPoly.index
         bpy.ops.mesh.select_linked(delimit={"SEAM"})
         bpy.ops.uv.follow_active_quads(mode="LENGTH_AVERAGE")
-        bpy.ops.uv.pack_islands(rotate_method="NONE")
+        #bpy.ops.uv.pack_islands(rotate_method="NONE")
 
         
 
