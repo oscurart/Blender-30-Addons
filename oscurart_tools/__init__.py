@@ -58,6 +58,7 @@ from oscurart_tools.mesh import print_uv_stats
 from oscurart_tools.mesh import peel_uv
 from oscurart_tools.mesh import edit_uvs_viewport
 from oscurart_tools.mesh import save_symmetry
+from oscurart_tools.mesh import align_vertices
 
 
 from bpy.types import (
@@ -87,6 +88,7 @@ class VIEW3D_MT_edit_mesh_oscurarttools(Menu):
         layout.operator("mesh.peel_unwrap")
         layout.operator("mesh.save_symmetry")
         layout.operator("mesh.restore_symmetry")
+        layout.operator("mesh.align_vertices")
         layout.separator()
         layout.operator("image.reload_images_osc")
         layout.operator("file.save_incremental_backup")
@@ -191,6 +193,7 @@ classes = (
     set_render_border.oscSetRenderBorder,
     save_symmetry.SaveSymmetry,
     save_symmetry.RestoreSymmetry,
+    align_vertices.alignVertices,
     )
 
 def register():
