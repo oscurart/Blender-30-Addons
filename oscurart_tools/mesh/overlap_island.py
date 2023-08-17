@@ -35,7 +35,8 @@ C = bpy.context
 D = bpy.data
 
 
-def DefOscOverlapUv(self,offset,rotate):
+def DefOscOverlapUv(self,offset,rotate,mirror):
+
     bpy.context.scene.tool_settings.use_uv_select_sync = True
     me = bpy.context.object.data
     bm = bmesh.from_edit_mesh(me)
@@ -53,6 +54,8 @@ def DefOscOverlapUv(self,offset,rotate):
             mirLoop[uv_lay].uv = selLoop[uv_lay].uv 
             if offset:
                 mirLoop[uv_lay].uv += Vector((1,0))
+            if mirror:
+                mirLoop[uv_lay].uv[0] = 1-mirLoop[uv_lay].uv[0]    
 
     bmesh.ops.reverse_uvs(bm, faces=[f for f in faceReverse])
     
@@ -85,6 +88,11 @@ class OscOverlapUv(Operator):
             name="Rotate"
             )
 
+    mirror : BoolProperty(
+            default=False,
+            name="Mirror"
+            )
+
     def execute(self, context):
-        DefOscOverlapUv(self,self.offset,self.rotate)
+        DefOscOverlapUv(self,self.offset,self.rotate,self.mirror)
         return {'FINISHED'}
