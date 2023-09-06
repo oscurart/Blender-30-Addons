@@ -260,7 +260,7 @@ def bake(map, frame, udim):
         alpha=True,
         float_buffer=True)
     print("Render: %s" % (map))
-    img.colorspace_settings.name = 'Linear'
+    img.colorspace_settings.name = 'Linear Rec.709'
 
     if not selected_to_active:
         img.filepath = "%s/%s_%s%s.exr" % (imgpath,
@@ -322,18 +322,16 @@ def bake(map, frame, udim):
         setPng()    
         oimg = bpy.data.images.load(img.filepath)    
         if  any(ColorChan in oimg.filepath for ColorChan in ["Color","Emission"]) :
-            oimg.colorspace_settings.name="Linear"
+            oimg.colorspace_settings.name="Linear Rec.709"
         else:
-            try:
-                oimg.colorspace_settings.name="sRGB OETF"#TroyLuts  
-            except:
-                oimg.colorspace_settings.name="sRGB"#OfficialLuts        
+
+            oimg.colorspace_settings.name="sRGB"#OfficialLuts 
+    
         vt=bpy.context.scene.view_settings.view_transform #save viewtransform
         vLook=bpy.context.scene.view_settings.look
-        try:
-            bpy.context.scene.view_settings.view_transform = "sRGB OETF"#TroyLuts 
-        except:
-            bpy.context.scene.view_settings.view_transform = "Standard"  #OfficialLuts   
+
+        bpy.context.scene.view_settings.view_transform = "Standard"  #OfficialLuts  
+         
         bpy.context.scene.view_settings.look="None"                 
         oimg.save_render(oimg.filepath.replace("exr","png")) #save png  
         #restore color management
