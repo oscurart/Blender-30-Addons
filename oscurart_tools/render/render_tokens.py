@@ -30,7 +30,10 @@ def replaceTokens (dummy):
     "$Scene":bpy.context.scene.name,
     "$File":os.path.basename(bpy.data.filepath).split(".")[0],
     "$ViewLayer":bpy.context.view_layer.name,
-    "$Camera": "NoCamera" if bpy.context.scene.camera == None else bpy.context.scene.camera.name}
+    "$Camera": "NoCamera" if bpy.context.scene.camera == None else bpy.context.scene.camera.name,
+    "$Object" : bpy.context.view_layer.objects.active.name}
+    
+    print(bpy.context.view_layer.objects.active.name)
 
     renpath = bpy.context.scene.render.filepath
 
@@ -40,11 +43,11 @@ def replaceTokens (dummy):
         for node in bpy.context.scene.node_tree.nodes:
             if node.type == "OUTPUT_FILE":
                 nodeDict.append([node,node.base_path])
-                node.base_path = node.base_path.replace("$Scene",tokens["$Scene"]).replace("$File",tokens["$File"]).replace("$ViewLayer",tokens["$ViewLayer"]).replace("$Camera",tokens["$Camera"])
+                node.base_path = node.base_path.replace("$Scene",tokens["$Scene"]).replace("$File",tokens["$File"]).replace("$ViewLayer",tokens["$ViewLayer"]).replace("$Camera",tokens["$Camera"]).replace("$Object",tokens["$Object"])
 
 
 
-    bpy.context.scene.render.filepath = renpath.replace("$Scene",tokens["$Scene"]).replace("$File",tokens["$File"]).replace("$ViewLayer",tokens["$ViewLayer"]).replace("$Camera",tokens["$Camera"])
+    bpy.context.scene.render.filepath = renpath.replace("$Scene",tokens["$Scene"]).replace("$File",tokens["$File"]).replace("$ViewLayer",tokens["$ViewLayer"]).replace("$Camera",tokens["$Camera"]).replace("$Object",tokens["$Object"])
     print(bpy.context.scene.render.filepath)
 
 
