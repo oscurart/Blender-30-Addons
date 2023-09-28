@@ -50,6 +50,7 @@ def setSceneOpts():
     sizex = bpy.context.scene.bake_pbr_channels.sizex
     sizey = bpy.context.scene.bake_pbr_channels.sizey
     pngCopy = bpy.context.scene.bake_pbr_channels.use_pngcopy
+    deleteExr = bpy.context.scene.bake_pbr_channels.delete_exr
     selected_to_active = bpy.context.scene.bake_pbr_channels.seltoact
     UDIMS = bpy.context.scene.bake_pbr_channels.UDIMS
 
@@ -341,6 +342,11 @@ def bake(map, frame, udim):
         bpy.data.images.remove(oimg)     
         setExr()
         
+        
+    #delete exr    
+    if bpy.context.scene.bake_pbr_channels.delete_exr:
+        os.remove(img.filepath)
+    
     #clearimage
     bpy.data.images.remove(img)
     print("%s Done!" % (map))
@@ -355,7 +361,7 @@ def bake(map, frame, udim):
     time_elapsed = datetime.now() - start_time
     print('Time elapsed (hh:mm:ss.ms) {}'.format(time_elapsed))
 
-
+    
 
 
 # __________________________________________________________________________________
@@ -471,6 +477,7 @@ class bakeChannels(bpy.types.PropertyGroup):
     sizey: bpy.props.IntProperty(name="Size y", default=1024)
     seltoact: bpy.props.BoolProperty(name="Selected to active", default=True)
     use_pngcopy: bpy.props.BoolProperty(name="Get a png copy", default=True)    
+    delete_exr: bpy.props.BoolProperty(name="Delete EXR at finish", default=False)   
     sequence: bpy.props.BoolProperty(name="Render sequence", default=False)
     UDIMS: bpy.props.StringProperty(name="UDIMS", default="")
 
@@ -540,7 +547,9 @@ class OSCPBR_PT_LayoutDemoPanel(bpy.types.Panel):
         row = layout.row()
         row.prop(scene.bake_pbr_channels, "seltoact")
         row = layout.row()
-        row.prop(scene.bake_pbr_channels, "use_pngcopy")        
+        row.prop(scene.bake_pbr_channels, "use_pngcopy")   
+        row = layout.row()
+        row.prop(scene.bake_pbr_channels, "delete_exr")              
         row = layout.row()
         row.prop(scene.bake_pbr_channels, "sequence")
         # Big render button
