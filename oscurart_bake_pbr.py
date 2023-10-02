@@ -67,7 +67,7 @@ def setSceneOpts():
         "Sheen_Tint": [False],
         "Clearcoat" : [False],
         "Clearcoat_Roughness" : [False],
-        "Transmission": [False],
+        "Transmission_Weight": [False],
         "IOR": [False],
         "Emission": [True],
         "Normal": [True],
@@ -468,7 +468,7 @@ class bakeChannels(bpy.types.PropertyGroup):
     Sheen_Tint: bpy.props.BoolProperty(name="Sheen Tint", default=False)   
     Clearcoat : bpy.props.BoolProperty(name="Clearcoat", default=False) 
     Clearcoat_Roughness : bpy.props.BoolProperty(name="Clearcoat Roughness", default=False) 
-    Transmission: bpy.props.BoolProperty(name="Transmission", default=False)
+    Transmission_Weight: bpy.props.BoolProperty(name="Transmission Weight", default=False)
     IOR: bpy.props.BoolProperty(name="IOR", default=False)
     Emission: bpy.props.BoolProperty(name="Emission", default=False)
     Normal: bpy.props.BoolProperty(name="Normal", default=False)
@@ -530,7 +530,7 @@ class OSCPBR_PT_LayoutDemoPanel(bpy.types.Panel):
         row = layout.row()
         row.prop(scene.bake_pbr_channels, "Clearcoat_Roughness")                                
         row = layout.row()
-        row.prop(scene.bake_pbr_channels, "Transmission")
+        row.prop(scene.bake_pbr_channels, "Transmission_Weight")
         row = layout.row()
         row.prop(scene.bake_pbr_channels, "IOR")
         row = layout.row()
