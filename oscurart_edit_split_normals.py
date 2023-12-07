@@ -36,7 +36,7 @@ def editmesh_create(self, normalSize, onlySelected, sharp, context):
 
     bpy.ops.object.mode_set(mode="OBJECT")
 
-    ob.calc_normals_split()
+    #ob.calc_normals_split()
 
     newNormals = []
     newEdges = []
@@ -123,7 +123,7 @@ def editmesh_apply(self, context):
 
     bpy.ops.object.mode_set(mode="OBJECT")
 
-    ob.data.calc_normals_split()
+    #ob.data.calc_normals_split()
 
     newNormals = []
 
